@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Siteimprove\Magento\Api\TokenInterface" type="Siteimprove\Magento\Model\Token" />
+    <preference for="Siteimprove\Magento\Api\Data\UrlInterface" type="Siteimprove\Magento\Model\Url" />
+    <preference for="Siteimprove\Magento\Api\UrlManagerInterface" type="Siteimprove\Magento\Model\UrlManager" />
+    <type name="Magento\Cms\Model\Page\DataProvider">
+        <plugin name="siteimprove_plugin" type="Siteimprove\Magento\Plugin\Cms\Model\Page\DataProvider"/>
+    </type>
+    <type name="Magento\Catalog\Model\Category\DataProvider">
+        <plugin name="siteimprove_plugin" type="Siteimprove\Magento\Plugin\Catalog\Model\Category\DataProvider"/>
+    </type>
+    <type name="Magento\Catalog\Controller\Adminhtml\Product\Initialization\Helper">
+        <plugin name="siteimprove_plugin" type="Siteimprove\Magento\Plugin\Catalog\Controller\Adminhtml\Product\Initialization\Helper"/>
+    </type>
+</config>

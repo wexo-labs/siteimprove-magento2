@@ -1,0 +1,27 @@
+<?php
+/** @var \Siteimprove\Magento\Block\Overlay $block */
+?>
+<script type="text/x-magento-init">
+{
+    "*": {
+        "siteimprove": {
+            "action": "domain",
+            "url": "<?= $block->escapeJs($block->getDefaultDomain()) ?>",
+            "token": "<?= $block->escapeJs($block->getToken()) ?>"
+        }
+    }
+}
+</script>
+<?php foreach ($block->getUrls() as $url): ?>
+<script type="text/x-magento-init">
+{
+    "*": {
+        "siteimprove": {
+            "action": "recheck",
+            "url": "<?= $block->escapeJs($url->getUrl()) ?>",
+            "token": "<?= $block->escapeJs($block->getToken()) ?>"
+        }
+    }
+}
+</script>
+<?php endforeach; ?>

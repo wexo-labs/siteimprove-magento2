@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="cms_page_prepare_save">
+        <observer name="siteimprove_observer" instance="Siteimprove\Magento\Observer\Cms\Page\PrepareSaveObserver" />
+    </event>
+    <event name="cms_page_save_commit_after">
+        <observer name="siteimprove_observer" instance="Siteimprove\Magento\Observer\Cms\Page\AfterCommit" />
+    </event>
+    <event name="catalog_product_save_commit_after">
+        <observer name="siteimprove_observer" instance="Siteimprove\Magento\Observer\Catalog\Product\AfterCommit" />
+    </event>
+    <event name="catalog_category_prepare_save">
+        <observer name="siteimprove_observer" instance="Siteimprove\Magento\Observer\Catalog\Category\PrepareSave" />
+    </event>
+    <event name="catalog_category_save_commit_after">
+        <observer name="siteimprove_observer" instance="Siteimprove\Magento\Observer\Catalog\Category\AfterCommit" />
+    </event>
+</config>
