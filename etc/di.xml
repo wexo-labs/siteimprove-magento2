@@ -13,4 +13,11 @@
     <type name="Magento\Catalog\Controller\Adminhtml\Product\Initialization\Helper">
         <plugin name="siteimprove_plugin" type="Siteimprove\Magento\Plugin\Catalog\Controller\Adminhtml\Product\Initialization\Helper"/>
     </type>
+    <type name="Magento\Eav\Model\Entity\Setup\PropertyMapper\Composite">
+        <arguments>
+            <argument name="propertyMappers" xsi:type="array">
+                <item name="siteimprove" xsi:type="string">Siteimprove\Magento\Model\ResourceModel\Setup\PropertyMapper</item>
+            </argument>
+        </arguments>
+    </type>
 </config>
