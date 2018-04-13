@@ -1,12 +1,13 @@
 <?php
 /** @var \Siteimprove\Magento\Block\Overlay $block */
+$defaultUrl = $block->getDefaultDomain();
 ?>
 <script type="text/x-magento-init">
 {
     "*": {
         "siteimprove": {
-            "action": "domain",
-            "url": "<?= $block->escapeJs($block->getDefaultDomain()) ?>",
+            "action": "<?= $defaultUrl ? 'domain' : 'input' ?>",
+            "url": "<?= $block->escapeJs($defaultUrl) ?>",
             "token": "<?= $block->escapeJs($block->getToken()) ?>"
         }
     }

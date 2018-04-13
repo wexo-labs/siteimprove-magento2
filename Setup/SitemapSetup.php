@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Siteimprove\Magento\Setup;
 
-
 class SitemapSetup
 {
     /**
@@ -29,15 +28,14 @@ class SitemapSetup
      */
     public function ensureSitemapsIsGenerated()
     {
-        $pathSecret = 'asdf1234';
         /** @var \Magento\Store\Api\Data\StoreInterface $store */
         foreach ($this->_storeRepository->getList() as $store) {
             $storeId = (int)$store->getId();
-            if ($this->_sitemapGenerator->isSitemapGenerated($pathSecret, $storeId)) {
+            if ($this->_sitemapGenerator->isSitemapGenerated($storeId)) {
                 continue;
             }
 
-            $this->_sitemapGenerator->getSitemapModel($pathSecret, $storeId)->generateXml();
+            $this->_sitemapGenerator->getSitemapModel($storeId)->generateXml();
         }
     }
 }

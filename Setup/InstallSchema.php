@@ -35,7 +35,7 @@ class InstallSchema implements InstallSchemaInterface
                 'type' => \Magento\Framework\DB\Ddl\Table::TYPE_SMALLINT,
                 'unsigned' => true,
                 'nullable' => false,
-                'default' => '1',
+                'default' => '0',
                 'comment' => 'Is Monitored By Siteimprove',
             ]
         );

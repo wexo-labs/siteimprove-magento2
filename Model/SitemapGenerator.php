@@ -12,6 +12,11 @@ use Magento\Framework\Exception\FileSystemException;
 class SitemapGenerator
 {
     /**
+     * @var \Siteimprove\Magento\Api\TokenInterface
+     */
+    protected $_token;
+
+    /**
      * @var \Magento\Framework\Filesystem
      */
     protected $_filesystem;
@@ -42,6 +47,7 @@ class SitemapGenerator
     protected $_rootDirectory;
 
     public function __construct(
+        \Siteimprove\Magento\Api\TokenInterface $token,
         \Magento\Framework\Filesystem $filesystem,
         \Magento\Framework\Filesystem\DirectoryList $directoryList,
         \Siteimprove\Magento\Model\SitemapFactory $sitemapFactory,
@@ -49,6 +55,7 @@ class SitemapGenerator
         \Magento\Framework\Url\ScopeResolverInterface $urlScopeResolver,
         \Magento\Config\Model\Config\Reader\Source\Deployed\DocumentRoot $documentRoot
     ) {
+        $this->_token = $token;
         $this->_filesystem = $filesystem;
         $this->_directoryList = $directoryList;
         $this->_sitemapFactory = $sitemapFactory;
@@ -57,16 +64,20 @@ class SitemapGenerator
         $this->_rootDirectory = $filesystem->getDirectoryWrite($documentRoot->getPath());
     }
 
+    public function getPathSecret()
+    {
+        return hash('sha256', $this->_token->getToken());
+    }
+
     /**
      * @param string $sitemapFilename
-     * @param string $pathSecret
      * @param int $storeId
      * @return SitemapModel
      * @throws \Magento\Framework\Exception\FileSystemException
      */
-    public function getSitemapModel(string $pathSecret, int $storeId): SitemapModel
+    public function getSitemapModel(int $storeId): SitemapModel
     {
-        list($modelPath, $pathInMedia, $filename) = $this->getModelPaths($pathSecret, $storeId);
+        list($modelPath, $pathInMedia, $filename) = $this->getModelPaths($storeId);
         return $this->_sitemapFactory->create([
             'data' => [
                 'sitemap_filename' => $filename,
@@ -76,23 +87,26 @@ class SitemapGenerator
         ]);
     }
 
-    public function isSitemapGenerated(string $pathSecret, int $storeId): bool
+    /**
+     * @param int $storeId
+     * @return bool
+     */
+    public function isSitemapGenerated(int $storeId): bool
     {
-        list($modelPath, $pathInMedia, $filename) = $this->getModelPaths($pathSecret, $storeId, false);
+        list($modelPath, $pathInMedia, $filename) = $this->getModelPaths($storeId, false);
         $reader= $this->_filesystem->getDirectoryRead(DirectoryList::MEDIA);
         return $reader->isExist("{$pathInMedia}/{$filename}");
     }
 
     /**
      * @param string $sitemapFilename
-     * @param string $pathSecret
      * @param int $storeId
      * @return string
      * @throws FileSystemException
      */
-    public function getSitemapUrl(string $pathSecret, int $storeId): string
+    public function getSitemapUrl(int $storeId): string
     {
-        list($modelPath, $pathInMedia, $filename) = $this->getModelPaths($pathSecret, $storeId);
+        list($modelPath, $pathInMedia, $filename) = $this->getModelPaths($storeId);
         /** @var \Magento\Framework\Url\ScopeInterface $urlResolver */
         $urlResolver = $this->_urlScopeResolver->getScope($storeId);
         $baseMediaUrl = $urlResolver->getBaseUrl(UrlInterface::URL_TYPE_MEDIA);
@@ -100,14 +114,14 @@ class SitemapGenerator
     }
 
     /**
-     * @param string $pathSecret
      * @param int $storeId
      * @param bool $ensureDir
      * @return string[]
      * @throws FileSystemException
      */
-    private function getModelPaths(string $pathSecret, int $storeId, bool $ensureDir = true)
+    private function getModelPaths(int $storeId, bool $ensureDir = true)
     {
+        $pathSecret = $this->getPathSecret();
         $pathInMedia = "siteimprove-maps/{$pathSecret}";
         $filename = "store_{$storeId}.xml";
         $mediaWriter = $this->_filesystem->getDirectoryWrite(DirectoryList::MEDIA);

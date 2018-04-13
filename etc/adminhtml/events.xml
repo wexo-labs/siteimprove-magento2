@@ -16,4 +16,10 @@
     <event name="catalog_category_save_commit_after">
         <observer name="siteimprove_observer" instance="Siteimprove\Magento\Observer\Catalog\Category\AfterCommit" />
     </event>
+    <event name="product_attribute_form_build">
+        <observer name="add_siteimprove_field_to_attribute" instance="Siteimprove\Magento\Observer\AddFieldToAttributeObserver"/>
+    </event>
+    <event name="product_attribute_grid_build">
+        <observer name="siteimprove_attribute_type" instance="Siteimprove\Magento\Observer\Grid\ProductAttributeGridBuildObserver" />
+    </event>
 </config>

@@ -14,7 +14,7 @@ class PropertyMapper extends PropertyMapperAbstract
     public function map(array $input, $entityTypeId)
     {
         return [
-            'is_monitored_by_siteimprove' => $this->_getValue($input, 'monitored_by_siteimprove', 1),
+            'is_monitored_by_siteimprove' => $this->_getValue($input, 'monitored_by_siteimprove', 0),
         ];
     }
 }

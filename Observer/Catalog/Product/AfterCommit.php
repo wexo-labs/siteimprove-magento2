@@ -17,15 +17,22 @@ class AfterCommit implements ObserverInterface
     protected $_helper;
 
     /**
+     * @var \Siteimprove\Magento\Model\AfterCommitHasChanges
+     */
+    protected $_afterCommitHasChanges;
+
+    /**
      * @var \Magento\Catalog\Model\Attribute\ScopeOverriddenValue
      */
     protected $_scopeOverriddenValue;
 
     public function __construct(
         \Siteimprove\Magento\Helper\Catalog $helper,
+        \Siteimprove\Magento\Model\AfterCommitHasChanges $afterCommitHasChanges,
         \Magento\Catalog\Model\Attribute\ScopeOverriddenValue $scopeOverriddenValue
     ) {
         $this->_helper = $helper;
+        $this->_afterCommitHasChanges = $afterCommitHasChanges;
         $this->_scopeOverriddenValue = $scopeOverriddenValue;
     }
 
@@ -39,20 +46,9 @@ class AfterCommit implements ObserverInterface
         /** @var \Magento\Catalog\Model\Product $product */
         $product = $observer->getData('product');
         if ($product->getData('process_and_notify_siteimprove_change_made')) {
-            $hasChange = false;
-            /** @var \Magento\Eav\Api\Data\AttributeInterface $attribute */
-            foreach ($product->getAttributes() as $attribute) {
-                if ($product->dataHasChangedFor($attribute->getAttributeCode())) {
-                    $attrCode = $attribute->getAttributeCode();
-                    if ($attrCode === 'updated_at' ||
-                        $attrCode === 'quantity_and_stock_status') {
-                        continue;
-                    }
-                    $hasChange = true;
-                }
-            }
-            if ($hasChange) {
-                $this->_helper->notifyAboutChanges((int)$product->getEntityId(), 'product', $product->getStoreIds());
+            $hasChanged = $this->_afterCommitHasChanges->checkProduct($product);
+            if ($hasChanged) {
+                $this->_helper->notifyAboutChanges((int)$product->getEntityId(), 'product', $hasChanged);
             }
         }
     }

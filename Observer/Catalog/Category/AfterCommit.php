@@ -16,10 +16,17 @@ class AfterCommit implements ObserverInterface
      */
     protected $_helper;
 
+    /**
+     * @var \Siteimprove\Magento\Model\AfterCommitHasChanges
+     */
+    protected $_afterCommitHasChanges;
+
     public function __construct(
-        \Siteimprove\Magento\Helper\Catalog $helper
+        \Siteimprove\Magento\Helper\Catalog $helper,
+        \Siteimprove\Magento\Model\AfterCommitHasChanges $afterCommitHasChanges
     ) {
         $this->_helper = $helper;
+        $this->_afterCommitHasChanges = $afterCommitHasChanges;
     }
 
     /**
@@ -32,7 +39,10 @@ class AfterCommit implements ObserverInterface
         /** @var \Magento\Catalog\Model\Category $category */
         $category = $observer->getData('category');
         if ($category->getData('process_and_notify_siteimprove_change_made')) {
-            $this->_helper->notifyAboutChanges((int)$category->getEntityId(), 'category', $category->getStoreIds());
+            $hasChanged = $this->_afterCommitHasChanges->checkCategory($category);
+            if ($hasChanged) {
+                $this->_helper->notifyAboutChanges((int)$category->getEntityId(), 'category', $hasChanged);
+            }
         }
     }
 }
