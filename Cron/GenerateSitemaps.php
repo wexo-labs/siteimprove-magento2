@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Siteimprove\Magento\Setup;
+namespace Siteimprove\Magento\Cron;
 
-class SitemapSetup
+class GenerateSitemaps
 {
     /**
      * @var \Magento\Store\Api\StoreRepositoryInterface
@@ -24,9 +24,9 @@ class SitemapSetup
     }
 
     /**
-     * Ensure Magento have a Siteimprove Token
+     * Ensure Magento have a Siteimprove Generated for each store
      */
-    public function ensureSitemapsIsGenerated()
+    public function execute()
     {
         /** @var \Magento\Store\Api\Data\StoreInterface $store */
         foreach ($this->_storeRepository->getList() as $store) {

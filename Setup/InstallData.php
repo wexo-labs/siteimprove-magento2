@@ -18,22 +18,15 @@ class InstallData implements InstallDataInterface
     protected $_tokenSetup;
 
     /**
-     * @var SitemapSetup
-     */
-    protected $_sitemapSetup;
-
-    /**
      * @var CategorySetupFactory
      */
     protected $_categorySetupFactory;
 
     public function __construct(
         TokenSetup $tokenSetup,
-        SitemapSetup $sitemapSetup,
         CategorySetupFactory $categorySetupFactory
     ) {
         $this->_tokenSetup = $tokenSetup;
-        $this->_sitemapSetup = $sitemapSetup;
         $this->_categorySetupFactory = $categorySetupFactory;
     }
 
@@ -66,7 +59,6 @@ class InstallData implements InstallDataInterface
         $catalogSetup->updateAttribute($entityTypeId, 'custom_layout_update', 'is_monitored_by_siteimprove', '1');
 
         $this->_tokenSetup->ensureTokenIsFetched();
-        $this->_sitemapSetup->ensureSitemapsIsGenerated();
 
         $setup->endSetup();
     }

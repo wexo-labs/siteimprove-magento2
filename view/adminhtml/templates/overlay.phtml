@@ -6,7 +6,7 @@ $defaultUrl = $block->getDefaultDomain();
 {
     "*": {
         "siteimprove": {
-            "action": "<?= $defaultUrl ? 'domain' : 'input' ?>",
+            "action": "domain",
             "url": "<?= $block->escapeJs($defaultUrl) ?>",
             "token": "<?= $block->escapeJs($block->getToken()) ?>"
         }

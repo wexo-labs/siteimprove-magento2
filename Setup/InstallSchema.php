@@ -11,15 +11,6 @@ use Magento\Framework\Setup\ModuleContextInterface;
 class InstallSchema implements InstallSchemaInterface
 {
     /**
-     * @var CategorySetupFactory
-     */
-    protected $_categorySetupFactory;
-
-    public function __construct(CategorySetupFactory $categorySetupFactory) {
-        $this->_categorySetupFactory = $categorySetupFactory;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function install(SchemaSetupInterface $setup, ModuleContextInterface $context)

@@ -14,15 +14,9 @@ class Recurring implements InstallSchemaInterface
      */
     protected $_tokenSetup;
 
-    /**
-     * @var SitemapSetup
-     */
-    protected $_sitemapSetup;
-
-    public function __construct(TokenSetup $tokenSetup, SitemapSetup $sitemapSetup)
+    public function __construct(TokenSetup $tokenSetup)
     {
         $this->_tokenSetup = $tokenSetup;
-        $this->_sitemapSetup = $sitemapSetup;
     }
 
     /**
@@ -33,7 +27,6 @@ class Recurring implements InstallSchemaInterface
         $setup->startSetup();
 
         $this->_tokenSetup->ensureTokenIsFetched();
-        $this->_sitemapSetup->ensureSitemapsIsGenerated();
 
         $setup->endSetup();
     }
