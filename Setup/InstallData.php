@@ -39,7 +39,7 @@ class InstallData implements InstallDataInterface
 
         /** @var \Magento\Catalog\Setup\CategorySetup $catalogSetup */
         $catalogSetup = $this->_categorySetupFactory->create(['setup' => $setup]);
-        $entityTypeId = ProductAttributeInterface::ENTITY_TYPE_ID;
+        $entityTypeId = ProductAttributeInterface::ENTITY_TYPE_CODE;
 
         // General
         $catalogSetup->updateAttribute($entityTypeId, 'name',        'is_monitored_by_siteimprove', '1');
