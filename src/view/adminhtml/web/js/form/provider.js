@@ -21,7 +21,7 @@ define([
                         'token': this.data.product._siteimprove_token
                     })
                 } else if (this.data._siteimprove_token) {
-                    if (this.data._siteimprove && this.data._siteimprove.length) {
+                    if (this.data._siteimprove && !_.isEmpty(this.data._siteimprove)) {
                         var frontendUrl;
                         if (this.data.current_store_id && this.data._siteimprove[this.data.current_store_id]) {
                             frontendUrl = this.data._siteimprove[this.data.current_store_id];

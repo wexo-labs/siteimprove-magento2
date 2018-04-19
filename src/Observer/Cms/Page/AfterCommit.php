@@ -43,7 +43,7 @@ class AfterCommit implements ObserverInterface
         $page = $observer->getData('object');
         if ($page->getData('process_and_notify_siteimprove_change_made')
             && (string)$page->getOrigData($page::CONTENT) !== (string)$page->getData($page::CONTENT)) {
-            $urls = $this->_cmsHelper->getPageUrls((int)$page->getId(), $page->getStores());
+            $urls = $this->_cmsHelper->getPageUrls((int)$page->getId());
 
             foreach ($urls as $storeId => $url) {
                 $this->_urlManager->addUrl($url, $storeId);
