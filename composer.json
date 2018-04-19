@@ -29,7 +29,7 @@
             "src/registration.php"
         ],
         "psr-4": {
-            "Siteimprove\\Magento\\": "src"
+            "Siteimprove\\Magento\\": "src/"
         }
     },
     "config": {
