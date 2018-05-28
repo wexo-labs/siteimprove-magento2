@@ -65,16 +65,6 @@ class SiteimproveInput implements ModifierInterface
             }
         }
 
-        \file_put_contents(
-            BP . '/hey-trace.log',
-            'Data: ' . json_encode([
-                'storeId'   => $storeId,
-                'productId' => $productId,
-            ], JSON_PRETTY_PRINT) . "\n",
-            FILE_APPEND
-        );
-
-
         $data[$productId][self::DATA_SOURCE_DEFAULT]['_siteimprove_token'] =
             $this->_token->getToken();
         $data[$productId][self::DATA_SOURCE_DEFAULT]['_siteimprove_url'] =
@@ -90,12 +80,6 @@ class SiteimproveInput implements ModifierInterface
      */
     public function modifyMeta(array $meta): array
     {
-        /*
-        \file_put_contents(
-            BP . '/hey-trace.log',
-            'Meta:' . json_encode($meta, JSON_PRETTY_PRINT) . "\n",
-            FILE_APPEND
-        );*/
         return $meta;
     }
 }
