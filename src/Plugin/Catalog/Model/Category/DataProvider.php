@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Siteimprove\Magento\Plugin\Catalog\Model\Category;
 
+use Magento\Framework\Exception\NoSuchEntityException;
+
 class DataProvider
 {
     /**
@@ -41,13 +43,32 @@ class DataProvider
                 if (!isset($this->_loadedData[$categoryId])) {
                     $this->_loadedData[$categoryId] = [];
                 }
+
                 $storeId = (int)$item['store_id'];
-                if ($storeId && !isset($this->_loadedData[$categoryId][$storeId])) {
-                    $this->_loadedData[$categoryId][$storeId] = [
-                        $this->_catalogHelper->getUrl($categoryId, 'category', $storeId),
-                    ];
+
+                if ($storeId) {
+                    if (!isset($this->_loadedData[$categoryId][$storeId])) {
+                        $this->_loadedData[$categoryId][$storeId] =
+                            $this->_catalogHelper->getUrl($categoryId, 'category', $storeId);
+                    }
+                } else {
+                    $storeIds = [];
+                    try {
+                        $storeIds = array_map('intval', $subject->getCurrentCategory()->getStoreIds());
+                    } catch (NoSuchEntityException $e) {}
+
+                    foreach ($storeIds as $storeId) {
+                        if (isset($this->_loadedData[$categoryId][$storeId])) {
+                            break;
+                        }
+                        if ($categoryUrl = $this->_catalogHelper->getUrl($categoryId, 'category', $storeId)) {
+                            $this->_loadedData[$categoryId][$storeId] = $categoryUrl;
+                            break;
+                        }
+                    }
                 }
-                $item['_siteimprove'] = $this->_loadedData[$categoryId][$storeId];
+
+                $item['_siteimprove'] = $this->_loadedData[$categoryId];
                 $item['_siteimprove_token'] = $this->_token->getToken();
             }
         }

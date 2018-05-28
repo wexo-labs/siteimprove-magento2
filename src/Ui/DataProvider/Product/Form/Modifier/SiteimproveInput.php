@@ -29,8 +29,7 @@ class SiteimproveInput implements ModifierInterface
         \Siteimprove\Magento\Api\TokenInterface $token,
         \Magento\Catalog\Model\Locator\LocatorInterface $locator,
         \Siteimprove\Magento\Helper\Catalog $catalogHelper
-    )
-    {
+    ) {
         $this->_token = $token;
         $this->_locator = $locator;
         $this->_catalogHelper = $catalogHelper;
@@ -65,10 +64,11 @@ class SiteimproveInput implements ModifierInterface
             }
         }
 
+        $data[$productId][self::DATA_SOURCE_DEFAULT]['_siteimprove'] = [
+            $storeId => $this->_catalogHelper->getUrl($productId, 'product', $storeId)
+        ];
         $data[$productId][self::DATA_SOURCE_DEFAULT]['_siteimprove_token'] =
             $this->_token->getToken();
-        $data[$productId][self::DATA_SOURCE_DEFAULT]['_siteimprove_url'] =
-            $this->_catalogHelper->getUrl($productId, 'product', $storeId);
 
         return $data;
     }
