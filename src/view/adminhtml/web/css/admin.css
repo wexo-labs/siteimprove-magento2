@@ -1,0 +1,21 @@
+.admin__menu .parent[data-ui-id^="menu-siteimprove-"] > a span:before,
+.admin__menu .parent[data-ui-id^="menu-siteimprove-"] > strong span:before {
+    display: inline-block;
+    background: url(../image/logo-small.png) no-repeat;
+    content: '';
+    width: 21px;
+    height: 21px;
+    margin-right: 5px;
+    margin-bottom: 1px;
+    vertical-align: bottom;
+}
+
+body[class^="siteimprove-"] header h1.page-title:before {
+    display: inline-block;
+    background: url(../image/logo-medium.png) no-repeat;
+    content: '';
+    width: 34px;
+    height: 34px;
+    margin-right: 10px;
+    vertical-align: top;
+}

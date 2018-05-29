@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Siteimprove_Magento::system_siteimprove"
+             title="Siteimprove"
+             module="Siteimprove_Magento"
+             sortOrder="99"
+             parent="Magento_Backend::system"
+             resource="Siteimprove_Magento::siteimprove"/>
+        <add id="Siteimprove_Magento::system_siteimprove_sitemap"
+             title="Sitemaps"
+             module="Siteimprove_Magento"
+             sortOrder="152"
+             parent="Siteimprove_Magento::system_siteimprove"
+             action="siteimprove/sitemap"
+             resource="Siteimprove_Magento::siteimprove_sitemap"/>
+    </menu>
+</config>
