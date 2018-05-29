@@ -6,6 +6,9 @@ namespace Siteimprove\Magento\Helper;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\Exception\InputException;
 
+/**
+ * TODO: Move DB operations to resource
+ */
 class Catalog
 {
 

@@ -9,6 +9,9 @@ use Magento\Cms\Api\Data\PageInterface;
 use Magento\Store\Api\Data\StoreInterface;
 use Magento\UrlRewrite\Service\V1\Data\UrlRewrite;
 
+/**
+ * TODO: Move DB operations to resource
+ */
 class Cms
 {
     const ADMIN_STORE_ID = \Magento\Store\Model\Store::DEFAULT_STORE_ID;
