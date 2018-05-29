@@ -53,6 +53,11 @@ class Cms
      */
     protected $_urlScopeResolver;
 
+    /**
+     * @var \Magento\Framework\App\Config\ScopeConfigInterface
+     */
+    protected $_scopeConfig;
+
     public function __construct(
         \Magento\Cms\Model\ResourceModel\Page $pageResource,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
@@ -61,7 +66,8 @@ class Cms
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Magento\Framework\EntityManager\TypeResolver $typeResolver,
         \Magento\Framework\EntityManager\MetadataPool $metadataPool,
-        \Magento\Framework\Url\ScopeResolverInterface $urlScopeResolver
+        \Magento\Framework\Url\ScopeResolverInterface $urlScopeResolver,
+        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
     ) {
         $this->_pageResource = $pageResource;
         $this->_storeManager = $storeManager;
@@ -71,6 +77,7 @@ class Cms
         $this->_typeResolver = $typeResolver;
         $this->_metadataPool = $metadataPool;
         $this->_urlScopeResolver = $urlScopeResolver;
+        $this->_scopeConfig = $scopeConfig;
     }
 
     /**
@@ -93,26 +100,87 @@ class Cms
             return [];
         }
 
-        $urlRewrites = $this->_urlFinder->findAllByData(
-            [
-                UrlRewrite::STORE_ID => $storeIds,
-                UrlRewrite::ENTITY_ID => $pageId,
-                UrlRewrite::ENTITY_TYPE => 'cms-page',
-            ]
-        );
+        // Collection of request paths with store id as key
+        $requestPaths = [];
+
+        // Fill out request path as empty string if page is "home page" on some stores
+        foreach ($storeIds as $storeId) {
+            if ($this->getHomePageId($storeId) === $pageId) {
+                $requestPaths[$storeId] = '';
+            }
+        }
+
+        // If some "home page" url paths have been added then we need to filter them out when we search for rewrites
+        if ($requestPaths) {
+            $urlRewriteStores = array_filter($storeIds, function ($storeId) use ($requestPaths) {
+                return !isset($requestPaths[$storeId]);
+            });
+        } else {
+            $urlRewriteStores = $storeIds;
+        }
+
+        // Find the rewrites in the system
+        if ($urlRewriteStores) {
+            $urlRewrites = $this->_urlFinder->findAllByData(
+                [
+                    UrlRewrite::STORE_ID => $urlRewriteStores,
+                    UrlRewrite::ENTITY_ID => $pageId,
+                    UrlRewrite::ENTITY_TYPE => 'cms-page',
+                ]
+            );
+
+            foreach ($urlRewrites as $urlRewrite) {
+                $storeId = (int)$urlRewrite->getStoreId();
+                if (isset($requestPaths[$storeId])) {
+                    continue;
+                }
+                $requestPaths[$storeId] = $urlRewrite->getRequestPath();
+            }
+        }
 
         $urls = [];
-        foreach ($urlRewrites as $urlRewrite) {
-            $storeId = (int)$urlRewrite->getStoreId();
-            if (isset($urls[$storeId])) {
-                continue;
-            }
+        // Combine page request path with store base url
+        foreach ($requestPaths as $storeId => $requestPath) {
             /** @var \Magento\Framework\Url\ScopeInterface $scope */
-            $scope = $this->_urlScopeResolver->getScope($urlRewrite->getStoreId());
-            $urls[$storeId] = $scope->getBaseUrl(UrlInterface::URL_TYPE_LINK) . $urlRewrite->getRequestPath();
+            $scope = $this->_urlScopeResolver->getScope($storeId);
+            $urls[$storeId] = $scope->getBaseUrl(UrlInterface::URL_TYPE_LINK) . $requestPath;
         }
 
         return $urls;
+    }
+
+    /**
+     * @param int $storeId
+     * @return int|null
+     */
+    public function getHomePageId(int $storeId)
+    {
+        $pageIdentifier = $this->_scopeConfig->getValue(
+            \Magento\Cms\Helper\Page::XML_PATH_HOME_PAGE,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $storeId
+        );
+
+        $metadata = $this->_metadataPool->getMetadata(PageInterface::class);
+        $connection = $this->_resourceConnection->getConnectionByName($metadata->getEntityConnectionName());
+        $cIdentifier = $connection->quoteIdentifier(PageInterface::IDENTIFIER);
+
+        $select = $connection->select()
+            ->from(['cp' => $metadata->getEntityTable()], $metadata->getIdentifierField())
+            ->join(
+                ['cps' => $this->_pageResource->getTable('cms_page_store')],
+                "cp.{$metadata->getIdentifierField()} = cps.page_id",
+                []
+            )
+            ->where("cp.{$cIdentifier} = :identifier")
+            ->where('cps.store_id IN (?)', [0, $storeId])
+            ->order('cps.store_id DESC');
+
+        $pageId = $connection->fetchOne($select, ['identifier' => $pageIdentifier]);
+        if (is_numeric($pageId)) {
+            return (int)$pageId;
+        }
+        return null;
     }
 
     /**
@@ -134,7 +202,7 @@ class Cms
             $select = $connection->select()
                 ->from(['cp' => $metadata->getEntityTable()])
                 ->join(
-                    ['cps' => 'cms_page_store'],
+                    ['cps' => $this->_pageResource->getTable('cms_page_store')],
                     "cp.{$cPageId} = cps.page_id",
                     []
                 )
