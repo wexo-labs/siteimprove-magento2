@@ -1,0 +1,19 @@
+$attrCode = 'short_description';
+$containsValue = $this->_scopeOverriddenValue->containsValue(
+    ProductInterface::class,
+    $product,
+    $attrCode,
+    $product->getStoreId()
+);
+
+ob_start();
+var_dump([
+    'attrCode' => $attrCode,
+    'storeId' => $product->getStoreId(),
+    'now' => $product->getData($attrCode),
+    'before' => $product->getOrigData($attrCode),
+    'containsValue' => $containsValue,
+]);
+$output = ob_get_clean();
+\file_put_contents(BP . '/save-product.log', $output . "\n", FILE_APPEND);
+

@@ -31,7 +31,12 @@ class GenerateSitemaps
         /** @var \Magento\Store\Api\Data\StoreInterface $store */
         foreach ($this->_storeRepository->getList() as $store) {
             $storeId = (int)$store->getId();
+            if (!$storeId) {
+                // Skip default store id "0"
+                continue;
+            }
             if ($this->_sitemapGenerator->isSitemapGenerated($storeId)) {
+                // Skip stores where the sitemap is already generated
                 continue;
             }
 
