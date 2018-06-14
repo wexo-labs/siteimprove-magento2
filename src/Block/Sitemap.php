@@ -35,7 +35,10 @@ class Sitemap extends \Magento\Backend\Block\Template
         foreach ($this->_storeRepository->getList() as $store) {
             $storeId = (int)$store->getId();
             if ($this->_sitemapGenerator->isSitemapGenerated($storeId)) {
-                $sitemapUrls[$storeId] = $this->_sitemapGenerator->getSitemapUrl($storeId);
+                $sitemapUrls[$storeId] = [
+                    'label' => $store->getName(),
+                    'url'   => $this->_sitemapGenerator->getSitemapUrl($storeId),
+                ];
             }
         }
         return $sitemapUrls;

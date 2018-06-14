@@ -1,5 +1,14 @@
 <?php /** @var \Siteimprove\Magento\Block\Sitemap $block */ ?>
+<table style="width:100%">
+    <tr style="text-align: left">
+        <th><?php echo __('Store name') ?></th>
+        <th><?php echo __('Sitemap url') ?></th>
+    </tr>
+    <?php foreach ($block->sitemapUrls() as $sitemap): ?>
+    <tr>
+        <td><?php echo $block->escapeHtml($sitemap['label']); ?></td>
+        <td><?php echo $block->escapeHtml($sitemap['url']); ?></td>
+    </tr>
+    <?php endforeach; ?>
+</table>
 
-<?php foreach ($block->sitemapUrls() as $url): ?>
-    <?php echo $block->escapeHtml($url); ?> <br>
-<?php endforeach; ?>
